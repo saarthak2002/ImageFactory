@@ -3,10 +3,11 @@ import { StyleSheet, Text, View, Image, Button, SafeAreaView, TextInput,Alert, A
 import axios from 'axios';
 
 import DropDownPicker from 'react-native-dropdown-picker';
-import {REACT_APP_OPEN_AI_KEY, REACT_APP_CLOUDINARY_CLOUD_NAME, REACT_APP_CLOUDINARY_UPLOAD_PRESET} from "@env";
+import {REACT_APP_BASE_API_URL, REACT_APP_OPEN_AI_KEY, REACT_APP_CLOUDINARY_CLOUD_NAME, REACT_APP_CLOUDINARY_UPLOAD_PRESET} from "@env";
 
 const GenerateImage = (props) => {
     
+    const navigation = props.navigation;
     const defaultImage = require('../assets/hedgehog.png');
 
     const { Configuration, OpenAIApi } = require("openai");
@@ -107,7 +108,7 @@ const GenerateImage = (props) => {
                     post.aesthetic = aesthetic;
 
                     axios
-                        .post('http://127.0.0.1:8082/api/posts', post)
+                        .post(REACT_APP_BASE_API_URL + 'posts', post)
                         .then((response) => { 
                             console.log('post saved');
                             setPostStatus('Post saved successfully');
@@ -126,7 +127,7 @@ const GenerateImage = (props) => {
                     setPostLoading(false);
                 })        
     };
-
+    
     return (
         <SafeAreaView
             style={[
