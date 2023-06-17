@@ -5,8 +5,12 @@ import axios from 'axios';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {REACT_APP_BASE_API_URL, REACT_APP_OPEN_AI_KEY, REACT_APP_CLOUDINARY_CLOUD_NAME, REACT_APP_CLOUDINARY_UPLOAD_PRESET} from "@env";
 
+import { AuthContext } from "../context/AuthContext";
+
 const GenerateImage = (props) => {
     
+    const { userInfo } = React.useContext(AuthContext);
+
     const navigation = props.navigation;
     const defaultImage = require('../assets/hedgehog.png');
 
@@ -30,6 +34,7 @@ const GenerateImage = (props) => {
         caption: '',
         prompt: '',
         aesthetic: '',
+        postedByUser: '',
     })
 
     // DropDownPicker
@@ -106,6 +111,8 @@ const GenerateImage = (props) => {
                     post.image = imageUrl;
                     post.prompt = prompt;
                     post.aesthetic = aesthetic;
+                    post.postedByUser = userInfo._id;
+                    post.postedByUserName = userInfo.username;
 
                     axios
                         .post(REACT_APP_BASE_API_URL + 'posts', post)
@@ -161,6 +168,8 @@ const GenerateImage = (props) => {
                     onPress={() => setModalVisible(true)}
                     disabled={loading}
                 />
+                <Text>{userInfo.username}</Text>
+                <Text>{userInfo._id}</Text>
             </ScrollView>
 
             <Modal 

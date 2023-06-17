@@ -40,7 +40,6 @@ const ItemView = (props) => {
             {
                 listings.map( (item) => {
                     return (
-                        
                         <View key={item._id} style={{flex: 1}}>
                             <View style={{height:'92%',flex:3}}>
                                 <Image source={{uri: item.image}}
@@ -66,12 +65,11 @@ const ItemView = (props) => {
 
                                 <View style={{marginLeft:15,paddingTop:3}}>
                                     <Text>266 likes</Text>
-                                    <Text><Text style={{fontWeight: "bold"}}>username </Text>{item.caption}</Text>
+                                    <Text><Text style={{fontWeight: "bold"}}>{item.postedByUserName ? item.postedByUserName+' ' : 'username ' }</Text>{item.caption}</Text>
                                     <Text><Text style={{fontWeight: "bold"}}>prompt </Text>{item.prompt}</Text>
                                 </View>
                             </View>
                         </View>
-                        
                     )
                 })
             }
