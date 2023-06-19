@@ -1,5 +1,5 @@
-import React, {useEffect,useState} from 'react';
-import { StyleSheet, Text, View, Image, Button, SafeAreaView, TextInput,Alert, ActivityIndicator,KeyboardAvoidingView, Modal,ScrollView } from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, Text, View, Image, Button, SafeAreaView, TextInput, Alert, ActivityIndicator, Modal, ScrollView} from 'react-native';
 import axios from 'axios';
 
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -10,13 +10,11 @@ import { AuthContext } from "../context/AuthContext";
 const GenerateImage = (props) => {
     
     const { userInfo } = React.useContext(AuthContext);
-
-    const navigation = props.navigation;
     const defaultImage = require('../assets/hedgehog.png');
 
     const { Configuration, OpenAIApi } = require("openai");
     const configuration = new Configuration({
-        apiKey: REACT_APP_OPEN_AI_KEY, // DOT ENV
+        apiKey: REACT_APP_OPEN_AI_KEY,
     });
     const openai = new OpenAIApi(configuration);
 
@@ -79,7 +77,6 @@ const GenerateImage = (props) => {
             const b64Response = response.data.data[0].b64_json;
             const img_src = `data:image/png;base64,${b64Response}`;
             setImage(img_src);
-            
         } catch (error) {
             console.log(error);
             Alert.alert('There was a network error. Please try again later.');
@@ -95,8 +92,8 @@ const GenerateImage = (props) => {
 
     const uploadImageToCDN = async () => {
         setPostLoading(true);
-        const cloudName = REACT_APP_CLOUDINARY_CLOUD_NAME; // DOT ENV
-        const uploadPreset = REACT_APP_CLOUDINARY_UPLOAD_PRESET; // DOT ENV
+        const cloudName = REACT_APP_CLOUDINARY_CLOUD_NAME;
+        const uploadPreset = REACT_APP_CLOUDINARY_UPLOAD_PRESET;
         const formData = new FormData();
         formData.append('file', image);
         formData.append('upload_preset', uploadPreset);

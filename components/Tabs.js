@@ -18,7 +18,8 @@ const Tabs = () => {
         return (
             <SearchStack.Navigator>
                 <SearchStack.Screen name="Search" component={Search} options={{headerShown: false}} />
-                <SearchStack.Screen name="Search Profile View" component={SearchProfileView} />
+                <SearchStack.Screen name="Search Profile View" component={SearchProfileView} options={({ route }) => ({ title: route.params.viewProfileOfUser+'\'s Profile' })} />
+                <SearchStack.Screen name="Post" component={SinglePostView} options={{headerBackTitle: 'Profile'}} />
             </SearchStack.Navigator>
         )
     }

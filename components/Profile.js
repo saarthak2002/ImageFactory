@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { ScrollView, SafeAreaView, StyleSheet, Text, Button, View, TouchableOpacity, Image } from "react-native";
+import { ScrollView, SafeAreaView, StyleSheet, Text, Button, View, TouchableOpacity, Image, RefreshControl } from "react-native";
 import { AuthContext } from "../context/AuthContext";
 import Spinner from "react-native-loading-spinner-overlay";
 import { FlatGrid } from 'react-native-super-grid';
@@ -14,7 +14,8 @@ const Profile = (props) => {
     const [listings, setListings] = useState([{
         image: '',
     }]); 
- 
+    const noImage = require('../assets/alert-circle-outline.png');
+
     const getListings = async () => {
         await axios.get(REACT_APP_BASE_API_URL + 'posts/user/' + userInfo._id)
                    .then((response) => { setListings(response.data); })
@@ -61,7 +62,14 @@ const Profile = (props) => {
                             </View>
                         </TouchableOpacity>
                     )}
-                /> : <Text>No posts yet</Text> }
+                /> : 
+                <ScrollView contentContainerStyle={{flexGrow: 1}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+                    <View style={{justifyContent: 'center',alignItems:'center'}}>
+                        <Image source={noImage} style={{ width: '50%', height: '50%' }} />
+                        <Text style={{marginTop:5, fontSize:25}}>No posts yet</Text>
+                    </View>
+                </ScrollView>
+                 }
         </SafeAreaView>
     );
 }
