@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
-import { SafeAreaView, StyleSheet, Text, FlatList, View, TouchableOpacity } from "react-native";
+import React, {useContext, useState} from "react";
+import {SafeAreaView, StyleSheet, Text, FlatList, View, TouchableOpacity} from "react-native";
 import {REACT_APP_BASE_API_URL} from "@env";
-import { AuthContext } from "../context/AuthContext";
+import {AuthContext} from "../context/AuthContext";
 import SearchBar from 'react-native-search-bar';
 import axios from "axios";
 
@@ -16,10 +16,10 @@ const Search = (props) => {
 
     const SearchResult = ({ _id, username }) => (
         <View style={{padding: 10, flex: 1, flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginLeft:20, marginRight:20}} >
-          <Text>{username} </Text>
-          <TouchableOpacity style={{backgroundColor:'#458eff', paddingLeft:20, paddingRight:20, paddingTop:10, paddingBottom:10, borderRadius:10}} onPress={ () => {navigation.navigate('Search Profile View', {viewProfileOfUser: username, idOfUserToView: _id } )} }>
-                    <Text style={{color: 'white'}}>View</Text>        
-           </TouchableOpacity>
+            <Text>{username}</Text>
+            <TouchableOpacity style={{backgroundColor:'#458eff', paddingLeft:20, paddingRight:20, paddingTop:10, paddingBottom:10, borderRadius:10}} onPress={ () => {navigation.navigate('Search Profile View', {viewProfileOfUser: username, idOfUserToView: _id } )} }>
+                <Text style={{color: 'white'}}>View</Text>        
+            </TouchableOpacity>
         </View>
     );
 

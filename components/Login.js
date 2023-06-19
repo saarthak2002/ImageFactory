@@ -1,10 +1,6 @@
-import React, {useState, useContext, useEffect} from 'react';
-import { StyleSheet, Text, View, Image, ScrollView, Button, TouchableOpacity, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import axios from 'axios';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import {REACT_APP_BASE_API_URL} from "@env";
-import { AuthContext } from '../context/AuthContext';
+import React, {useState, useContext} from 'react';
+import {StyleSheet, Text, View, Image, TouchableOpacity, TextInput, TouchableWithoutFeedback, Keyboard} from 'react-native';
+import {AuthContext} from '../context/AuthContext';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 const Login = (props) => {

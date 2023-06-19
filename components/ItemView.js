@@ -1,10 +1,9 @@
 import React, {useEffect,useState,useContext} from 'react';
-import { RefreshControl, Text, View, Image, ScrollView, Button, TouchableOpacity } from 'react-native';
+import {RefreshControl, Text, View, Image, ScrollView, TouchableOpacity} from 'react-native';
 import axios from 'axios';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
-import { AuthContext } from '../context/AuthContext';
-
+import {REACT_APP_BASE_API_URL} from "@env";
+import {AuthContext} from '../context/AuthContext';
 
 const ItemView = (props) => {
 
@@ -17,7 +16,7 @@ const ItemView = (props) => {
     const [refreshing, setRefreshing] = useState(false);
 
     const getListings = async () => {
-        await axios.get('http://127.0.0.1:8082/api/posts')
+        await axios.get(REACT_APP_BASE_API_URL + 'posts')
                     .then((response) => { setListings(response.data); })
                     .catch((error) => { console.log(error); });
     }

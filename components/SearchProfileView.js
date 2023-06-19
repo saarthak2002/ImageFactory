@@ -6,8 +6,6 @@ import axios from "axios";
 import Spinner from "react-native-loading-spinner-overlay";
 import { FlatGrid } from 'react-native-super-grid';
 
-
-
 const SearchProfileView = (props) => {
     const { viewProfileOfUser, idOfUserToView } = props.route.params;
     const [refreshing, setRefreshing] = useState(false);
@@ -36,76 +34,81 @@ const SearchProfileView = (props) => {
     const [postCount, setPostCount] = useState(0);
 
     const getPosts = async () => {
-        await axios.get(REACT_APP_BASE_API_URL + 'posts/user/' + idOfUserToView)
-                    .then((response) => { 
-                        setPosts(response.data); 
-                        console.log(response.data);
-                        setPostCount(response.data.length); 
-                    })
-                    .catch((error) => { console.log('unable to get posts: '+error); });
+        await axios
+                .get(REACT_APP_BASE_API_URL + 'posts/user/' + idOfUserToView)
+                .then((response) => { 
+                    setPosts(response.data); 
+                    console.log(response.data);
+                    setPostCount(response.data.length); 
+                })
+                .catch((error) => { console.log('unable to get posts: '+error); });
     };
 
     const getUserDetailsOfCurrentUser = async () => {
-        await axios.get(REACT_APP_BASE_API_URL + 'userdetails/user/' + userInfo._id)
-                    .then((response) => { 
-                        console.log(response.data);
-                        setUserDetails(response.data); 
-                    })
-                    .catch((error) => { console.log('unable to get user details: '+error); });
-    }
+        await axios
+                .get(REACT_APP_BASE_API_URL + 'userdetails/user/' + userInfo._id)
+                .then((response) => { 
+                    console.log(response.data);
+                    setUserDetails(response.data); 
+                })
+                .catch((error) => { console.log('unable to get user details: '+error); });
+    };
 
     const getUserDetailsOfProfileUser = async () => {
-        await axios.get(REACT_APP_BASE_API_URL + 'userdetails/user/' + idOfUserToView)
-                   .then((response) => {
+        await axios
+                .get(REACT_APP_BASE_API_URL + 'userdetails/user/' + idOfUserToView)
+                .then((response) => {
                         setFollowersCount(response.data.followers.length);
                         setFollowingCount(response.data.following.length); 
-                   })
-                   .catch((error) => { console.log('unable to get user details: '+error); });
-    }  
+                })
+                .catch((error) => { console.log('unable to get user details: '+error); });
+    };  
 
     const onRefresh = () => {
         console.log('Refreshing...');
         setRefreshing(true);
         getPosts();
         setRefreshing(false);
-    }
+    };
 
-    const handleFollow = async () => { // use UserDetails instead
+    const handleFollow = async () => {
         const currentUser = userInfo._id;
         const userToFollow = idOfUserToView;
         console.log(currentUser + ' wants to follow ' + userToFollow);
         setLoading(true);
-        await axios.post(REACT_APP_BASE_API_URL + 'userdetails/follow', {currentUser, userToFollow}) // userdetails
-                    .then((response) => {
-                        console.log(response.data); 
-                        getUserDetailsOfCurrentUser(); 
-                        getUserDetailsOfProfileUser(); 
-                        setLoading(false);
-                    })
-                    .catch((error) => {
-                        console.log('unable to follow user: '+error);
-                        setLoading(false);
-                    });
-    }
+        await axios
+                .post(REACT_APP_BASE_API_URL + 'userdetails/follow', {currentUser, userToFollow})
+                .then((response) => {
+                    console.log(response.data); 
+                    getUserDetailsOfCurrentUser(); 
+                    getUserDetailsOfProfileUser(); 
+                    setLoading(false);
+                })
+                .catch((error) => {
+                    console.log('unable to follow user: '+error);
+                    setLoading(false);
+                });
+    };
 
     const handleUnfollow = async () => {
         const currentUser = userInfo._id;
         const userToUnfollow = idOfUserToView;
         console.log(currentUser + ' wants to unfollow ' + userToUnfollow);
         setLoading(true);
-        await axios.post(REACT_APP_BASE_API_URL + 'userdetails/unfollow', {currentUser, userToUnfollow}) // userdetails
-                    .then((response) => {
-                        console.log(response.data);
-                        getUserDetailsOfCurrentUser();
-                        getUserDetailsOfProfileUser();
-                        setLoading(false);
-                    })
-                    .catch((error) => {
-                        console.log('unable to unfollow user: '+error);
-                        setLoading(false);
-                    });
+        await axios
+                .post(REACT_APP_BASE_API_URL + 'userdetails/unfollow', {currentUser, userToUnfollow})
+                .then((response) => {
+                    console.log(response.data);
+                    getUserDetailsOfCurrentUser();
+                    getUserDetailsOfProfileUser();
+                    setLoading(false);
+                })
+                .catch((error) => {
+                    console.log('unable to unfollow user: '+error);
+                    setLoading(false);
+                });
 
-    }
+    };
 
     useEffect(() => {
         getPosts();
@@ -113,17 +116,16 @@ const SearchProfileView = (props) => {
         getUserDetailsOfProfileUser();
     }, []);
 
-    console.log(userInfo)
     return(
         <SafeAreaView
-        style={[
-            styles.container,
-            {
-                flexDirection: 'column',
-                width: '100%',
-            },
-        ]}
-    >
+            style={[
+                styles.container,
+                {
+                    flexDirection: 'column',
+                    width: '100%',
+                },
+            ]}
+        >
             <Spinner visible={loading} />
             <View style={{flexDirection:'row',justifyContent:'space-between', marginLeft:15, marginRight:15, paddingTop:5}}>
                 <View style={{justifyContent: 'center', alignItems:'center'}}>
@@ -133,61 +135,55 @@ const SearchProfileView = (props) => {
                         <Image source={{ uri:"https://lh3.googleusercontent.com/ogw/AOLn63FwPuujbk3pqjcXIEU1gPZhgO0Q4TR-LYG_B_kYuw=s64-c-mo" }} style={styles.profileImg} />
                     </TouchableHighlight>
                 </View>
-            <View style={{justifyContent: 'center',alignItems:'center'}}>
-            
-            <View style={{flexDirection:'row'}}>
-                <View style={{alignItems:'center',justifyContent:'center',padding:10, width: 85, height: 60}}>
-                    <Text>{followersCount}</Text>
-                    <Text>Followers</Text>
-                </View>
-                <View style={{alignItems:'center',justifyContent:'center',padding:10,width: 85, height: 60}}>
-                    <Text>{followingCount}</Text>
-                    <Text>Following</Text>
-                </View>
-                <View style={{alignItems:'center',justifyContent:'center',padding:10,width: 85, height: 60}}>
-                    <Text>{postCount}</Text>
-                    <Text>Posts</Text>
-                </View>
-            </View>
-
-            { userDetails.following.includes(idOfUserToView) ?
-                <TouchableOpacity style={{backgroundColor:'#458eff', paddingLeft:50, paddingRight:50, paddingTop:10, paddingBottom:10, borderRadius:10}} onPress={ () => { handleUnfollow(); } }>
-                    <Text style={{color: 'white'}}>Unfollow</Text>        
-                </TouchableOpacity>
-                :
-                <TouchableOpacity style={{backgroundColor:'#458eff', paddingLeft:50, paddingRight:50, paddingTop:10, paddingBottom:10, borderRadius:10}} onPress={ () => { handleFollow(); } }>
-                    <Text style={{color: 'white'}}>Follow</Text>        
-                </TouchableOpacity>
-
-            }
-            </View>
-            </View>
-            
-            
-            { posts.length > 0 ? 
-            <FlatGrid
-                itemDimension={130}
-                data={posts}
-                style={styles.gridView}
-                refreshing={refreshing}
-                onRefresh={() => onRefresh()}
-                spacing={0}
-                renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() => navigation.navigate('Post', { postId: item._id })}>
-                        <View style={[styles.itemContainer, { backgroundColor: item.code }]}>
-                            <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%' }} />
+                <View style={{justifyContent: 'center',alignItems:'center'}}>
+                    <View style={{flexDirection:'row'}}>
+                        <View style={{alignItems:'center',justifyContent:'center',padding:10, width: 85, height: 60}}>
+                            <Text>{followersCount}</Text>
+                            <Text>Followers</Text>
                         </View>
-                    </TouchableOpacity>
-                )}
-            /> : 
-            <View style={{justifyContent: 'center',alignItems:'center'}}>
-                
-                <Image source={noImage} style={{ width: '50%', height: '50%' }} />
-                <Text style={{marginTop:5, fontSize:25}}>No posts yet</Text>
-            </View>
-            }
-    </SafeAreaView>
+                        <View style={{alignItems:'center',justifyContent:'center',padding:10,width: 85, height: 60}}>
+                            <Text>{followingCount}</Text>
+                            <Text>Following</Text>
+                        </View>
+                        <View style={{alignItems:'center',justifyContent:'center',padding:10,width: 85, height: 60}}>
+                            <Text>{postCount}</Text>
+                            <Text>Posts</Text>
+                        </View>
+                    </View>
 
+                    { userDetails.following.includes(idOfUserToView) ?
+                        <TouchableOpacity style={{backgroundColor:'#458eff', paddingLeft:50, paddingRight:50, paddingTop:10, paddingBottom:10, borderRadius:10}} onPress={ () => { handleUnfollow(); } }>
+                            <Text style={{color: 'white'}}>Unfollow</Text>        
+                        </TouchableOpacity>
+                        :
+                        <TouchableOpacity style={{backgroundColor:'#458eff', paddingLeft:50, paddingRight:50, paddingTop:10, paddingBottom:10, borderRadius:10}} onPress={ () => { handleFollow(); } }>
+                            <Text style={{color: 'white'}}>Follow</Text>        
+                        </TouchableOpacity>
+                    }
+                </View>
+            </View>
+            { posts.length > 0 ? 
+                <FlatGrid
+                    itemDimension={130}
+                    data={posts}
+                    style={styles.gridView}
+                    refreshing={refreshing}
+                    onRefresh={() => onRefresh()}
+                    spacing={0}
+                    renderItem={({ item }) => (
+                        <TouchableOpacity onPress={() => navigation.navigate('Post', { postId: item._id })}>
+                            <View style={[styles.itemContainer, { backgroundColor: item.code }]}>
+                                <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%' }} />
+                            </View>
+                        </TouchableOpacity>
+                    )}
+                /> : 
+                <View style={{justifyContent: 'center',alignItems:'center'}}>
+                    <Image source={noImage} style={{ width: '50%', height: '50%' }} />
+                    <Text style={{marginTop:5, fontSize:25}}>No posts yet</Text>
+                </View>
+            }
+        </SafeAreaView>
     )
 }
 
@@ -200,18 +196,18 @@ const styles = StyleSheet.create({
         marginTop: 10,
         paddingTop: 5,
         flex: 1,
-      },
+    },
     itemContainer: {
         justifyContent: 'flex-end',
         borderRadius: 0,
         padding: 1,
         height: 150,
-      },
+    },
     itemName: {
         fontSize: 16,
         color: '#fff',
         fontWeight: '600',
-      },
+    },
     itemCode: {
         fontWeight: '600',
         fontSize: 12,

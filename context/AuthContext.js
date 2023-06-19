@@ -12,7 +12,8 @@ export const AuthProvider = ({ children }) => {
 
     const register = (username, email, password) => {
         setIsLoading(true);
-        axios.post(REACT_APP_BASE_API_URL + 'users/signup', {username:username, email:email, password:password, followers:[], following:[]})
+        axios
+            .post(REACT_APP_BASE_API_URL + 'users/signup', {username:username, email:email, password:password, followers:[], following:[]})
             .then((response) => {
                 let userInfo = response.data;
                 setUserInfo(userInfo);
@@ -29,7 +30,8 @@ export const AuthProvider = ({ children }) => {
     const login = (username, password) => {
         setIsLoading(true);
 
-        axios.post(REACT_APP_BASE_API_URL + 'users/auth', {username:username, password:password} )
+        axios
+            .post(REACT_APP_BASE_API_URL + 'users/auth', {username:username, password:password} )
             .then((response) => {
                 const userInfo = response.data; 
                 console.log(userInfo);

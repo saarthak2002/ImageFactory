@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
-import { ScrollView, SafeAreaView, StyleSheet, Text, Button, View, TouchableOpacity, Image } from "react-native";
+import React, {useEffect, useState} from "react";
+import {ScrollView, Text, View, TouchableOpacity, Image} from "react-native";
 import axios from 'axios';
 import {REACT_APP_BASE_API_URL} from "@env";
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -7,7 +7,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 const SinglePostView = (props) => {
 
     const {postId} = props.route.params;
-
     const [post, setPost] = useState({});
 
     const getPost = async () => {
@@ -24,10 +23,9 @@ const SinglePostView = (props) => {
         <ScrollView>
             <View style={{flex: 1}}>
                 <View style={{height:'92%',flex:3}}>
-                    <Image source={{uri: post.image}}
-                        style={{width:'100%', height:'100%', aspectRatio:1, alignSelf:'center'}} />
+                    <Image source={{uri: post.image}} style={{width:'100%', height:'100%', aspectRatio:1, alignSelf:'center'}} />
                 </View>
-                <View style={{paddingTop:10,paddingBottom:20}}>
+                <View style={{paddingTop:10, paddingBottom:20}}>
                     <View style={{flexDirection: "row", marginLeft:15, justifyContent:'space-between',marginRight:15}}>
                         <View style={{flexDirection: "row"}}>
                             <TouchableOpacity onPress={(e)=>{console.log(post._id + ' liked')}}>
