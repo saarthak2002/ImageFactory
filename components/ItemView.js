@@ -1,5 +1,5 @@
 import React, {useEffect,useState,useContext} from 'react';
-import {RefreshControl, Text, View, Image, ScrollView, TouchableOpacity, ActivityIndicator} from 'react-native';
+import {RefreshControl, Text, View, Image, ScrollView, TouchableOpacity, ActivityIndicator, Modal, Button, StyleSheet, TextInput, KeyboardAvoidingView, SafeAreaView, Alert} from 'react-native';
 import axios from 'axios';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {REACT_APP_BASE_API_URL} from "@env";
@@ -24,6 +24,16 @@ const ItemView = (props) => {
     const [postsLoading, setPostsLoading] = useState(false);
     const noImage = require('../assets/earth-outline.png');
     const [likeLoading, setLikeLoading] = useState(false);
+    const [commentModalVisible, setCommentModalVisible] = useState(false);
+    const [commentOnPostId, setCommentOnPostId] = useState('');
+    const [comment, setComment] = useState('');
+    const [commentLoading, setCommentLoading] = useState(false);
+    const [commentList, setCommentList] = useState([{
+        postId: '',
+        userId: '',
+        username: '',
+        commentText: '',
+    }]);
 
     const getListings = async () => {
         setPostsLoading(true);
@@ -125,6 +135,53 @@ const ItemView = (props) => {
             });
     }
 
+    const handleOpenCommentsModal = (post_id) => {
+        getCommentsOnPost(post_id);
+        setCommentOnPostId(post_id);
+        setCommentModalVisible(true);
+        console.log('opening comments modal for post: '+post_id);
+    }
+
+    const getCommentsOnPost = async (postId) => {
+        await axios
+            .get(REACT_APP_BASE_API_URL + 'comments/' + postId)
+            .then((response) => { 
+                setCommentList(response.data);
+            })
+            .catch((error) => { 
+                console.log('unable to get comments: ' + error); 
+            });
+    }
+
+    const submitComment = async () => {
+        if(comment == '') {
+            Alert.alert('Please enter a comment');
+            return;
+        }
+        console.log('submitting comment: '+comment+' on post: '+commentOnPostId);
+        setCommentLoading(true);
+        await axios
+            .post(REACT_APP_BASE_API_URL + 'comments', {postId: commentOnPostId, userId: userInfo._id, username: userInfo.username, commentText: comment})
+            .then((response) => {
+                if(response.data.error) {
+                    console.log('unable to post comment');
+                    setComment('');
+                    setCommentLoading(false);
+                }
+                else {
+                    console.log('comment posted');
+                    setComment('');
+                    getCommentsOnPost(commentOnPostId);
+                    setCommentLoading(false);
+                }
+            })
+            .catch((error) => {
+                console.log('error posting comment: '+error);
+                setComment('');
+                setCommentLoading(false);
+            });
+    }
+
     console.log(listings)
     return (
         <ScrollView
@@ -140,6 +197,61 @@ const ItemView = (props) => {
                 }
             }}
         >
+            {/* Comment Modal */}
+            <Modal 
+                visible={commentModalVisible}
+                animationType='slide'
+                transparent={true}
+            >
+                <KeyboardAvoidingView behavior={"padding"}>
+                    <Spinner visible={commentLoading} textContent={'Loading...'} textStyle={{color:'white'}} />
+                    <View
+                        style={{height: '100%', marginTop: 'auto', backgroundColor:'white', borderTopLeftRadius: 20, borderTopRightRadius: 20}}
+                    >
+                        <SafeAreaView>
+                            <View style={{flexDirection: "row", marginLeft:20, marginRight:20, justifyContent:'space-between'}}>
+                                <Button title="Cancel" color='steelblue' onPress={() => setCommentModalVisible(false)}></Button>
+                            </View>
+                            <Text style={{textAlign:'center', fontSize:16, fontWeight:'bold'}}>{commentList.length} {commentList.length == 1 ? 'Comment' : 'Comments'}</Text>
+                        </SafeAreaView>
+                        <ScrollView 
+                            style={[styles.container, {marginTop: 15}]}
+                            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                            keyboardDismissMode='on-drag'
+                        >
+                            {
+                                commentList.length > 0 
+                                ?
+                                    commentList.map((comment) => {
+                                        return (
+                                            <View style={{marginLeft:10, marginRight:10, paddingBottom:10}}>
+                                                <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
+                                                    <Text style={{fontWeight:'bold', fontSize:15}}>{comment.username}</Text>
+                                                    <Text style={{fontSize: 12, color:'#777'}}>{formatTime(new Date(comment.createdAt))}</Text>
+                                                </View>
+                                                <Text style={{fontSize: 15}}>{comment.commentText}</Text>
+                                            </View>
+                                        )
+                                    })
+                                :
+                                    <View style={{alignItems:'center', justifyContent:'center', marginTop:'50%'}}>
+                                        <Text style={{fontSize:16, fontWeight:'bold'}}>No comments yet</Text>
+                                    </View>
+                            }
+                        </ScrollView>
+                        <KeyboardAvoidingView>
+                            <View style={{flexDirection:'row', justifyContent:'space-between', alignItems: 'center', marginLeft:20, marginRight:20, marginBottom:40}}>
+                                <TextInput placeholder='Comment' onChangeText={setComment} value={comment} multiline={true} style={{borderWidth:1,borderRadius:5, borderColor:'#777',padding:8, marginTop:10, width:'80%'}}></TextInput>
+                                <TouchableOpacity onPress={() => { submitComment(); }} style={{width:'20%', marginLeft:7}}>
+                                    <Text style={{color:'steelblue', fontSize: 16, fontWeight:'bold', textAlign:'center'}}>Post</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </KeyboardAvoidingView>
+                    </View>
+                </KeyboardAvoidingView>
+            </Modal>
+            {/* Comment Modal */}
+
             <Spinner visible={likeLoading}/>
             <Text>{userInfo.username}</Text>
             {
@@ -170,7 +282,7 @@ const ItemView = (props) => {
                                                     </View>
                                                 </TouchableOpacity>                                         
                                             }
-                                            <TouchableOpacity onPress={()=>{}}>
+                                            <TouchableOpacity onPress={()=>{ handleOpenCommentsModal(item._id) }}>
                                                 <View>
                                                     <Ionicons name={'ios-chatbubbles'} size={30} color={'black'}/>
                                                 </View>
@@ -200,5 +312,18 @@ const ItemView = (props) => {
         </ScrollView>  
     );
 }
+
+const styles = StyleSheet.create({
+    input: {
+      height: 40,
+      margin: 12,
+      borderWidth: 1,
+      padding: 10,
+    },
+    container: {
+        flex: 1,
+        padding: 20,
+    },
+});
 
 export default ItemView;

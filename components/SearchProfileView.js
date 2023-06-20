@@ -13,7 +13,7 @@ const SearchProfileView = (props) => {
     const [refreshing, setRefreshing] = useState(false);
     const navigation = props.navigation;
     const noImage = require('../assets/alert-circle-outline.png');
-    const {userInfo} = useContext(AuthContext);
+    const {userInfo, logout} = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
 
     const [posts, setPosts] = useState([{
@@ -153,14 +153,22 @@ const SearchProfileView = (props) => {
                         </View>
                     </View>
 
-                    { userDetails.following.includes(idOfUserToView) ?
-                        <TouchableOpacity style={{backgroundColor:'#458eff', paddingLeft:50, paddingRight:50, paddingTop:10, paddingBottom:10, borderRadius:10}} onPress={ () => { handleUnfollow(); } }>
-                            <Text style={{color: 'white'}}>Unfollow</Text>        
-                        </TouchableOpacity>
+                    {
+                        idOfUserToView == userInfo._id
+                        ?
+                            <TouchableOpacity style={{backgroundColor:'#458eff', paddingLeft:50, paddingRight:50, paddingTop:10, paddingBottom:10, borderRadius:10}} onPress={ () => { logout(); } }>
+                                <Text style={{color: 'white'}}>Logout</Text>        
+                            </TouchableOpacity>
                         :
-                        <TouchableOpacity style={{backgroundColor:'#458eff', paddingLeft:50, paddingRight:50, paddingTop:10, paddingBottom:10, borderRadius:10}} onPress={ () => { handleFollow(); } }>
-                            <Text style={{color: 'white'}}>Follow</Text>        
-                        </TouchableOpacity>
+                            userDetails.following.includes(idOfUserToView)
+                            ?
+                                <TouchableOpacity style={{backgroundColor:'#458eff', paddingLeft:50, paddingRight:50, paddingTop:10, paddingBottom:10, borderRadius:10}} onPress={ () => { handleUnfollow(); } }>
+                                    <Text style={{color: 'white'}}>Unfollow</Text>        
+                                </TouchableOpacity>
+                            :
+                                <TouchableOpacity style={{backgroundColor:'#458eff', paddingLeft:50, paddingRight:50, paddingTop:10, paddingBottom:10, borderRadius:10}} onPress={ () => { handleFollow(); } }>
+                                    <Text style={{color: 'white'}}>Follow</Text>        
+                                </TouchableOpacity>
                     }
                 </View>
             </View>

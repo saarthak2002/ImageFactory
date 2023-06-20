@@ -166,8 +166,6 @@ const GenerateImage = (props) => {
                     onPress={() => setModalVisible(true)}
                     disabled={loading}
                 />
-                <Text>{userInfo.username}</Text>
-                <Text>{userInfo._id}</Text>
             </ScrollView>
 
             <Modal 
