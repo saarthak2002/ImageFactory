@@ -180,7 +180,7 @@ const ItemView = (props) => {
                                     </View>
 
                                     <View style={{marginLeft:15, paddingTop:3, marginRight:15}}>
-                                        <Text>{item.likedBy.length} likes</Text>
+                                        <Text>{item.likedBy.length} {item.likedBy.length == 1 ? 'like' : 'likes'}</Text>
                                         <Text><Text style={{fontWeight: "bold"}}>{item.postedByUserName ? item.postedByUserName+' ' : 'username ' }</Text>{item.caption}</Text>
                                         <Text><Text style={{fontWeight: "bold"}}>prompt </Text>{item.prompt}</Text>
                                         <Text style={{fontWeight:'300', marginTop:1, color:'#9c9ea1'}}>{formatTime(new Date(item.createdAt))}</Text>

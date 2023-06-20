@@ -82,7 +82,7 @@ const Profile = (props) => {
                     <View style={{flexDirection:'row'}}>
                         <View style={{alignItems:'center',justifyContent:'center',padding:10, width: 85, height: 60}}>
                             <Text>{followersCount}</Text>
-                            <Text>Followers</Text>
+                            <Text>{followersCount == 1 ? 'Follower' : 'Followers'}</Text>
                         </View>
                         <View style={{alignItems:'center',justifyContent:'center',padding:10,width: 85, height: 60}}>
                             <Text>{followingCount}</Text>
@@ -90,7 +90,7 @@ const Profile = (props) => {
                         </View>
                         <View style={{alignItems:'center',justifyContent:'center',padding:10,width: 85, height: 60}}>
                             <Text>{postCount}</Text>
-                            <Text>Posts</Text>
+                            <Text>{postCount == 1 ? 'Post' : 'Posts'}</Text>
                         </View>
                     </View>
                 </View>

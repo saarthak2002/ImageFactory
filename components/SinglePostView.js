@@ -110,7 +110,7 @@ const SinglePostView = (props) => {
                         <Text>{post.aesthetic}</Text>
                     </View>
                     <View style={{marginLeft:15,paddingTop:3, marginRight:15}}>
-                        <Text>{post.likedBy.length} likes</Text>
+                        <Text>{post.likedBy.length} {post.likedBy.length == 1 ? 'like' : 'likes'}</Text>
                         <Text><Text style={{fontWeight: "bold"}}>{post.postedByUserName ? post.postedByUserName+' ' : 'username ' }</Text>{post.caption}</Text>
                         <Text><Text style={{fontWeight: "bold"}}>prompt </Text>{post.prompt}</Text>
                         <Text style={{fontWeight:'300', marginTop:1, color:'#9c9ea1'}}>{formatTime(new Date(post.createdAt))}</Text>
