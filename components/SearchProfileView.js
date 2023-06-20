@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet, Text, TouchableHighlight, View, TouchableOpacity, Image } from "react-native";
-import {REACT_APP_BASE_API_URL} from "@env";
+import { REACT_APP_BASE_API_URL } from "@env";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import Spinner from "react-native-loading-spinner-overlay";
 import { FlatGrid } from 'react-native-super-grid';
+import defaultImage from '../assets/default-post.png';
+const defaultImageUri = Image.resolveAssetSource(defaultImage).uri;
 
 const SearchProfileView = (props) => {
     const { viewProfileOfUser, idOfUserToView } = props.route.params;
@@ -15,7 +17,7 @@ const SearchProfileView = (props) => {
     const [loading, setLoading] = useState(false);
 
     const [posts, setPosts] = useState([{
-        image: '',
+        image: defaultImageUri,
     }]); 
 
     const [userDetails, setUserDetails] = useState({
@@ -172,7 +174,7 @@ const SearchProfileView = (props) => {
                     spacing={0}
                     renderItem={({ item }) => (
                         <TouchableOpacity onPress={() => navigation.navigate('Post', { postId: item._id })}>
-                            <View style={[styles.itemContainer, { backgroundColor: item.code }]}>
+                            <View style={[styles.itemContainer]}>
                                 <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%' }} />
                             </View>
                         </TouchableOpacity>
@@ -202,16 +204,6 @@ const styles = StyleSheet.create({
         borderRadius: 0,
         padding: 1,
         height: 150,
-    },
-    itemName: {
-        fontSize: 16,
-        color: '#fff',
-        fontWeight: '600',
-    },
-    itemCode: {
-        fontWeight: '600',
-        fontSize: 12,
-        color: '#fff',
     },
     profileImgContainer: {
         marginLeft: 8,

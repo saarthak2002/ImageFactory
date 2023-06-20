@@ -1,5 +1,5 @@
 import React, {useContext, useState} from "react";
-import {SafeAreaView, StyleSheet, Text, FlatList, View, TouchableOpacity} from "react-native";
+import {SafeAreaView, StyleSheet, Text, FlatList, View, TouchableOpacity, Image} from "react-native";
 import {REACT_APP_BASE_API_URL} from "@env";
 import {AuthContext} from "../context/AuthContext";
 import SearchBar from 'react-native-search-bar';
@@ -13,6 +13,7 @@ const Search = (props) => {
     const {userInfo} = useContext(AuthContext);
     const [searchResults, setSearchResults] = useState([]);
     const [loading, setLoading] = useState(false);
+    const noImage = require('../assets/search-circle-outline.png');
 
     const SearchResult = ({ _id, username }) => (
         <View style={{padding: 10, flex: 1, flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginLeft:20, marginRight:20}} >
@@ -50,11 +51,20 @@ const Search = (props) => {
                 onSearchButtonPress={ handleSearchInput }
                 onCancelButtonPress={ () => {} }
             />
-            <FlatList
-                data={searchResults}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id}
-            />
+            {
+                searchResults.length > 0 
+                ?
+                    <FlatList
+                        data={searchResults}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => item._id}
+                    />
+                :
+                    <View style={{justifyContent: 'center',alignItems:'center'}}>
+                        <Image source={noImage} style={{ width: '60%', height: '60%' }} />
+                        <Text style={{marginTop:5, fontSize:25}}>Find your tribe</Text>
+                    </View>
+            }
         </SafeAreaView>
     )
 }

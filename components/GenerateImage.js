@@ -1,10 +1,8 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text, View, Image, Button, SafeAreaView, TextInput, Alert, ActivityIndicator, Modal, ScrollView} from 'react-native';
 import axios from 'axios';
-
 import DropDownPicker from 'react-native-dropdown-picker';
 import {REACT_APP_BASE_API_URL, REACT_APP_OPEN_AI_KEY, REACT_APP_CLOUDINARY_CLOUD_NAME, REACT_APP_CLOUDINARY_UPLOAD_PRESET} from "@env";
-
 import { AuthContext } from "../context/AuthContext";
 
 const GenerateImage = (props) => {
@@ -33,6 +31,8 @@ const GenerateImage = (props) => {
         prompt: '',
         aesthetic: '',
         postedByUser: '',
+        postedByUserName: '',
+        likedBy: [],
     })
 
     // DropDownPicker
@@ -110,6 +110,7 @@ const GenerateImage = (props) => {
                     post.aesthetic = aesthetic;
                     post.postedByUser = userInfo._id;
                     post.postedByUserName = userInfo.username;
+                    post.likedBy = [];
 
                     axios
                         .post(REACT_APP_BASE_API_URL + 'posts', post)
