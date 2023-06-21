@@ -38,7 +38,7 @@ const ItemView = (props) => {
     }]);
 
     const getListings = async () => {
-        setPostsLoading(true);
+        // setPostsLoading(true);
         await axios
             .get(REACT_APP_BASE_API_URL + 'posts/feed/' + userInfo._id)
             .then((response) => { 
@@ -274,7 +274,7 @@ const ItemView = (props) => {
 
             <Spinner visible={likeLoading}/>
             <Spinner visible={postsLoading} textContent='Loading...' textStyle={{color:'white'}}/>
-            <Text>{userInfo.username}</Text>
+            <Text style={{fontWeight: '500', fontSize: 20, color: '#1C2B33', marginLeft: 15, paddingBottom: 10, textAlign: 'center' }}>Hi, {userInfo.username}</Text>
             {
                 listings.length > 0 
                 ?
@@ -289,7 +289,7 @@ const ItemView = (props) => {
                                 {/* Post Image */}
                                 <View style={{height:'92%',flex:3}}>
                                     <Image 
-                                        source={{uri: item.image}}
+                                        source={{uri: item.image ? item.image : defaultImageUri}}
                                         style={{width:'100%', height:'100%', aspectRatio:1, alignSelf:'center'}} 
                                     />
                                 </View>

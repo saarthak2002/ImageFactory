@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View, Image, Button, SafeAreaView, TextInput, Alert, ActivityIndicator, Modal, ScrollView} from 'react-native';
+import {StyleSheet, Text, View, Image, Button, SafeAreaView, TextInput, Alert, ActivityIndicator, Modal, ScrollView } from 'react-native';
 import axios from 'axios';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {REACT_APP_BASE_API_URL, REACT_APP_OPEN_AI_KEY, REACT_APP_CLOUDINARY_CLOUD_NAME, REACT_APP_CLOUDINARY_UPLOAD_PRESET} from "@env";
@@ -9,6 +9,7 @@ const GenerateImage = (props) => {
     
     const { userInfo } = React.useContext(AuthContext);
     const defaultImage = require('../assets/hedgehog.png');
+    const backgroundImage = require('../assets/wave.png');
 
     const { Configuration, OpenAIApi } = require("openai");
     const configuration = new Configuration({
@@ -143,10 +144,12 @@ const GenerateImage = (props) => {
                 },
             ]}
         >
+            
             <ScrollView 
                 style={{flex: 1, backgroundColor: 'white'}}
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             >
+                
                 { postStatus && <Text style={{padding:10, fontSize:10, textAlign: 'center', backgroundColor:'green', color:'white'}}>{postStatus}</Text> }
                 <View style={{flexDirection: "row", marginLeft:20, marginRight:20, justifyContent:'space-between'}}>
                     <Button title="Save" color='steelblue'></Button>

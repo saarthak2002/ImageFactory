@@ -5,6 +5,8 @@ import { REACT_APP_BASE_API_URL } from "@env";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { AuthContext } from '../context/AuthContext';
 import Spinner from "react-native-loading-spinner-overlay";
+import defaultImage from '../assets/default-post.png';
+const defaultImageUri = Image.resolveAssetSource(defaultImage).uri;
 
 const SinglePostView = (props) => {
 
@@ -196,7 +198,7 @@ const SinglePostView = (props) => {
             <Spinner visible={likeLoading}/>
             <View style={{flex: 1}}>
                 <View style={{height:'92%',flex:3}}>
-                    <Image source={{uri: post.image}} style={{width:'100%', height:'100%', aspectRatio:1, alignSelf:'center'}} />
+                    <Image source={{uri: post.image ? post.image : defaultImageUri}} style={{width:'100%', height:'100%', aspectRatio:1, alignSelf:'center'}} />
                 </View>
                 <View style={{paddingTop:10, paddingBottom:20}}>
                     <View style={{flexDirection: "row", marginLeft:15, justifyContent:'space-between',marginRight:15}}>

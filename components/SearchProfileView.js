@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { SafeAreaView, StyleSheet, Text, TouchableHighlight, View, TouchableOpacity, Image } from "react-native";
+import { SafeAreaView, StyleSheet, Text, TouchableHighlight, View, TouchableOpacity, Image, Alert } from "react-native";
 import { REACT_APP_BASE_API_URL } from "@env";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
@@ -15,6 +15,7 @@ const SearchProfileView = (props) => {
     const noImage = require('../assets/alert-circle-outline.png');
     const {userInfo, logout} = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
+    const [loadingProfile, setLoadingProfile] = useState(false);
 
     const [posts, setPosts] = useState([{
         image: defaultImageUri,
@@ -46,14 +47,20 @@ const SearchProfileView = (props) => {
     const [postCount, setPostCount] = useState(0);
 
     const getPosts = async () => {
+        setLoadingProfile(true);
         await axios
                 .get(REACT_APP_BASE_API_URL + 'posts/user/' + idOfUserToView)
                 .then((response) => { 
                     setPosts(response.data); 
                     console.log(response.data);
                     setPostCount(response.data.length); 
+                    setLoadingProfile(false);
                 })
-                .catch((error) => { console.log('unable to get posts: '+error); });
+                .catch((error) => {
+                    console.log('unable to get posts: '+error);
+                    setLoadingProfile(false);
+                    Alert.alert('Error', 'Unable to get posts. Please try again later.');
+                });
     };
 
     const getUserDetailsOfCurrentUser = async () => {
@@ -124,9 +131,11 @@ const SearchProfileView = (props) => {
     };
 
     useEffect(() => {
+       
         getPosts();
         getUserDetailsOfCurrentUser();
         getUserDetailsOfProfileUser();
+        
     }, []);
 
     return(
@@ -139,6 +148,7 @@ const SearchProfileView = (props) => {
                 },
             ]}
         >
+            <Spinner visible={loadingProfile} textContent="Loading profile..." />
             <Spinner visible={loading} />
             <View style={{flexDirection:'row',justifyContent:'space-between', marginLeft:15, marginRight:15, paddingTop:5}}>
                 <View style={{justifyContent: 'center', alignItems:'center'}}>
