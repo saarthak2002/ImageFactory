@@ -23,7 +23,17 @@ const SearchProfileView = (props) => {
     const [userDetails, setUserDetails] = useState({
         user: '',
         followers: [],
-        following: []
+        following: [],
+        profilePicture: 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg',
+        bio: '',
+    })
+
+    const [userDetailsSearch, setUserDetailsSearch] = useState({
+        user: '',
+        followers: [],
+        following: [],
+        profilePicture: 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg',
+        bio: '',
     })
 
     const [userDetailsOfProfileUser, setUserDetailsOfProfileUser] = useState({
@@ -62,6 +72,7 @@ const SearchProfileView = (props) => {
                 .then((response) => {
                         setFollowersCount(response.data.followers.length);
                         setFollowingCount(response.data.following.length); 
+                        setUserDetailsSearch(response.data);
                 })
                 .catch((error) => { console.log('unable to get user details: '+error); });
     };  
@@ -134,7 +145,7 @@ const SearchProfileView = (props) => {
                     <TouchableHighlight
                         style={[styles.profileImgContainer, { borderColor: 'green', borderWidth:1 }]}
                     >
-                        <Image source={{ uri:"https://lh3.googleusercontent.com/ogw/AOLn63FwPuujbk3pqjcXIEU1gPZhgO0Q4TR-LYG_B_kYuw=s64-c-mo" }} style={styles.profileImg} />
+                        <Image source={{ uri: userDetailsSearch.profilePicture ? userDetailsSearch.profilePicture : 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg' }} style={styles.profileImg} />
                     </TouchableHighlight>
                 </View>
                 <View style={{justifyContent: 'center',alignItems:'center'}}>

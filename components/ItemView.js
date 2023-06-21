@@ -41,7 +41,6 @@ const ItemView = (props) => {
             .get(REACT_APP_BASE_API_URL + 'posts/feed/' + userInfo._id)
             .then((response) => { 
                 console.log('getting posts');
-                console.log(userDetails.following);
                 setListings(response.data); 
                 setPostsLoading(false);
             })

@@ -1,11 +1,12 @@
 import React, {useContext, useEffect, useState} from "react";
-import {ScrollView, SafeAreaView, StyleSheet, Text, Button, View, TouchableOpacity, Image, RefreshControl, TouchableHighlight} from "react-native";
+import {ScrollView, SafeAreaView, StyleSheet, Text, Button, View, TouchableOpacity, Image, RefreshControl, TouchableHighlight, Alert} from "react-native";
 import {AuthContext} from "../context/AuthContext";
 import Spinner from "react-native-loading-spinner-overlay";
 import {FlatGrid} from 'react-native-super-grid';
 import axios from 'axios';
-import {REACT_APP_BASE_API_URL} from "@env";
+import {REACT_APP_BASE_API_URL, REACT_APP_CLOUDINARY_CLOUD_NAME, REACT_APP_CLOUDINARY_UPLOAD_PRESET} from "@env";
 import defaultImage from '../assets/default-post.png';
+import * as ImagePicker from 'expo-image-picker';
 const defaultImageUri = Image.resolveAssetSource(defaultImage).uri;
 
 const Profile = (props) => {
@@ -32,6 +33,13 @@ const Profile = (props) => {
 
     const [followersCount, setFollowersCount] = useState(0);
     const [followingCount, setFollowingCount] = useState(0);
+    const [userDetails, setUserDetails] = useState({
+        user: '',
+        followers: [],
+        following: [],
+        profilePicture: 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg',
+        bio: '',
+    });
 
     const getUserDetails = async () => {
         await axios
@@ -39,6 +47,7 @@ const Profile = (props) => {
                 .then((response) => {
                     setFollowersCount(response.data.followers.length);
                     setFollowingCount(response.data.following.length);
+                    setUserDetails(response.data);
                 })
                 .catch((error) => { console.log('unable to get user details: '+error); });
     }
@@ -50,6 +59,56 @@ const Profile = (props) => {
         getUserDetails();
         setRefreshing(false);
     }
+
+    const [profilePicture, setProfilePicture] = useState(null);
+    const [profilePictureLoading, setProfilePictureLoading] = useState(false);
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            base64: true,
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.4,
+        });
+    
+        if (!result.canceled) {
+            setProfilePictureLoading(true);
+            setProfilePicture(result.assets[0].uri);
+            
+            // upload to CDN
+            const cloudName = REACT_APP_CLOUDINARY_CLOUD_NAME;
+            const uploadPreset = REACT_APP_CLOUDINARY_UPLOAD_PRESET;
+            const formData = new FormData();
+            const b64Response = result.assets[0].base64;
+            const img_src = `data:image/png;base64,${b64Response}`;
+            formData.append('file', img_src);
+            formData.append('upload_preset', uploadPreset);
+            await axios
+                .post(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, formData)
+                .then((response) => { 
+                    console.log(response.data.secure_url);
+                    const imageUrl = response.data.secure_url;
+                    const userId = userInfo._id;
+                    axios
+                        .post(REACT_APP_BASE_API_URL + 'userdetails/profilepicture', {user: userId, profilePicture: imageUrl})
+                        .then((response) => {
+                            console.log(response.data);
+                            getUserDetails();
+                            setProfilePictureLoading(false);
+                        })
+                        .catch((error) => {
+                            console.log('error changing picture: ' + error);
+                            Alert.alert('Network Error', 'There was an error uploading your new profile picture. Please try again later.');
+                            setProfilePictureLoading(false);
+                        });
+                })
+                .catch((error) => { 
+                    console.log(error);
+                    Alert.alert('Network Error', 'There was an error uploading your new profile picture. Please try again later.');
+                    setProfilePictureLoading(false);
+                });
+        }
+    };
 
     useEffect(() => {
         getListings();
@@ -68,13 +127,13 @@ const Profile = (props) => {
             ]}
         >
                 <Spinner visible={isLoading} />
-
+                <Spinner visible={profilePictureLoading} />
                 <View style={{flexDirection:'row',justifyContent:'space-between', marginLeft:15, marginRight:15, paddingTop:15}}>
                 <View style={{justifyContent: 'center', alignItems:'center'}}>
                     <TouchableHighlight
                         style={[styles.profileImgContainer, { borderColor: 'green', borderWidth:1 }]}
                     >
-                        <Image source={{ uri:"https://lh3.googleusercontent.com/ogw/AOLn63FwPuujbk3pqjcXIEU1gPZhgO0Q4TR-LYG_B_kYuw=s64-c-mo" }} style={styles.profileImg} />
+                        <Image source={{ uri: userDetails.profilePicture ? userDetails.profilePicture : 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg' }} style={styles.profileImg} />
                     </TouchableHighlight>
                     <Text>@{userInfo.username}</Text>
                 </View>
@@ -97,6 +156,7 @@ const Profile = (props) => {
             </View>
 
             <Button title='Logout' onPress={() => logout()}></Button>
+            <Button title='Edit Profile' onPress={() => {pickImage();}}></Button>
             { 
                 listings.length > 0 
                 ? 
