@@ -152,11 +152,22 @@ const Profile = (props) => {
                             <Text>{postCount == 1 ? 'Post' : 'Posts'}</Text>
                         </View>
                     </View>
+                    <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-evenly'}}>
+                        <TouchableOpacity style={{backgroundColor:'#458eff', paddingLeft:10, paddingRight:10, paddingTop:10, paddingBottom:10, borderRadius:10, }} onPress={ () => {  } }>
+                            <Text style={{color: 'white'}}>Edit Bio</Text>        
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{backgroundColor:'#458eff', paddingLeft:10, paddingRight:10, paddingTop:10, paddingBottom:10, borderRadius:10, marginLeft:10 }} onPress={ () => { pickImage(); } }>
+                            <Text style={{color: 'white'}}>Edit Image</Text>        
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{backgroundColor:'#458eff', paddingLeft:10, paddingRight:10, paddingTop:10, paddingBottom:10, borderRadius:10, marginLeft:10}} onPress={ () => { logout(); } }>
+                            <Text style={{color: 'white'}}>Logout</Text>        
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
-
-            <Button title='Logout' onPress={() => logout()}></Button>
-            <Button title='Edit Profile' onPress={() => {pickImage();}}></Button>
+            <Text style={{textAlign:'center', fontWeight:'bold', marginTop:5, color:'#9c9ea1'}}>{userDetails.bio}</Text>
+            
+           
             { 
                 listings.length > 0 
                 ? 

@@ -28,11 +28,13 @@ const ItemView = (props) => {
     const [commentOnPostId, setCommentOnPostId] = useState('');
     const [comment, setComment] = useState('');
     const [commentLoading, setCommentLoading] = useState(false);
+    const [commentOpenModalLoading, setCommentOpenModalLoading] = useState(false);
     const [commentList, setCommentList] = useState([{
         postId: '',
         userId: '',
         username: '',
         commentText: '',
+        profilePicture: '',
     }]);
 
     const getListings = async () => {
@@ -135,16 +137,19 @@ const ItemView = (props) => {
     }
 
     const handleOpenCommentsModal = (post_id) => {
+        setCommentOpenModalLoading(true);
         getCommentsOnPost(post_id);
         setCommentOnPostId(post_id);
         setCommentModalVisible(true);
         console.log('opening comments modal for post: '+post_id);
+        setCommentOpenModalLoading(false);
     }
 
     const getCommentsOnPost = async (postId) => {
         await axios
             .get(REACT_APP_BASE_API_URL + 'comments/' + postId)
             .then((response) => { 
+                console.log(response.data);
                 setCommentList(response.data);
             })
             .catch((error) => { 
@@ -212,8 +217,10 @@ const ItemView = (props) => {
                                 <Button title="Cancel" color='steelblue' onPress={() => setCommentModalVisible(false)}></Button>
                             </View>
                             <Text style={{textAlign:'center', fontSize:16, fontWeight:'bold'}}>{commentList.length} {commentList.length == 1 ? 'Comment' : 'Comments'}</Text>
+                            { commentOpenModalLoading && <ActivityIndicator size='large' />}
                         </SafeAreaView>
-                        <ScrollView 
+                        <ScrollView
+                            key="commentScrollView"
                             style={[styles.container, {marginTop: 15}]}
                             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                             keyboardDismissMode='on-drag'
@@ -223,17 +230,20 @@ const ItemView = (props) => {
                                 ?
                                     commentList.map((comment) => {
                                         return (
-                                            <View style={{marginLeft:10, marginRight:10, paddingBottom:10}}>
-                                                <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
-                                                    <Text style={{fontWeight:'bold', fontSize:15}}>{comment.username}</Text>
-                                                    <Text style={{fontSize: 12, color:'#777'}}>{formatTime(new Date(comment.createdAt))}</Text>
+                                            <View key={comment._id} style={{marginLeft:10, marginRight:10, paddingBottom:15}}>
+                                                <View>
+                                                    <Image source={{ uri: comment.profilePicture ? comment.profilePicture : 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg'  }} style={{ width: 50, height: 50, borderRadius: 50/2 }} />
+                                                    <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
+                                                        <Text style={{fontWeight:'bold', fontSize:15}}>{comment.username}</Text>
+                                                        <Text style={{fontSize: 12, color:'#777'}}>{formatTime(new Date(comment.createdAt))}</Text>
+                                                    </View>
+                                                    <Text style={{fontSize: 15}}>{comment.commentText}</Text>
                                                 </View>
-                                                <Text style={{fontSize: 15}}>{comment.commentText}</Text>
                                             </View>
                                         )
                                     })
                                 :
-                                    <View style={{alignItems:'center', justifyContent:'center', marginTop:'50%'}}>
+                                    <View key={'nocomm'} style={{alignItems:'center', justifyContent:'center', marginTop:'50%'}}>
                                         <Text style={{fontSize:16, fontWeight:'bold'}}>No comments yet</Text>
                                     </View>
                             }
