@@ -49,6 +49,7 @@ const ItemView = (props) => {
             .catch((error) => { 
                 console.log(error); 
                 setPostsLoading(false);
+                Alert.alert('Error fetching feed. Please try again later.');
             });
     }
 
@@ -66,7 +67,10 @@ const ItemView = (props) => {
                     setUserDetails(response.data);
                     console.log(response.data);
                 })
-                .catch((error) => { console.log('unable to get user details: '+error); });
+                .catch((error) => {
+                    console.log('unable to get user details: '+error);
+                    Alert.alert('Unable to fetch data. Please try again later.');
+                });
     }
 
     useEffect(() => {
@@ -101,11 +105,13 @@ const ItemView = (props) => {
                 else {
                     console.log('unable to like post');
                     setLikeLoading(false);
+                    Alert.alert('Error processing request. Please try again later.');
                 }
             })
             .catch((error) => { 
                 console.log('error liking post: '+error); 
                 setLikeLoading(false);
+                Alert.alert('Error processing request. Please try again later.');
             });
     }
 
@@ -128,11 +134,13 @@ const ItemView = (props) => {
                 else {
                     console.log('unable to unlike post');
                     setLikeLoading(false);
+                    Alert.alert('Error processing request. Please try again later.');
                 }
             })
             .catch((error) => {
                 console.log('error unliking post: '+error);
                 setLikeLoading(false);
+                Alert.alert('Error processing request. Please try again later.');
             });
     }
 
@@ -154,6 +162,7 @@ const ItemView = (props) => {
             })
             .catch((error) => { 
                 console.log('unable to get comments: ' + error); 
+                Alert.alert('Error fetching comments. Please try again later.');
             });
     }
 
@@ -169,6 +178,7 @@ const ItemView = (props) => {
             .then((response) => {
                 if(response.data.error) {
                     console.log('unable to post comment');
+                    Alert.alert('Error posting comment. Please try again later.');
                     setComment('');
                     setCommentLoading(false);
                 }
@@ -183,6 +193,7 @@ const ItemView = (props) => {
                 console.log('error posting comment: '+error);
                 setComment('');
                 setCommentLoading(false);
+                Alert.alert('Error posting comment. Please try again later.');
             });
     }
 
@@ -262,6 +273,7 @@ const ItemView = (props) => {
             {/* Comment Modal */}
 
             <Spinner visible={likeLoading}/>
+            <Spinner visible={postsLoading} textContent='Loading...' textStyle={{color:'white'}}/>
             <Text>{userInfo.username}</Text>
             {
                 listings.length > 0 
@@ -269,6 +281,12 @@ const ItemView = (props) => {
                     listings.map( (item) => {
                         return (
                             <View key={item._id} style={{flex: 1}}>
+                                {/* Post Header */}
+                                <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft:15, paddingBottom: 5 }}>
+                                    <Image source={{ uri: item.profilePicture ? item.profilePicture : 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg' }} style={{ width: 40, height: 40, borderRadius: 40/2 }} />
+                                    <Text style={{marginLeft: 10}}>{item.postedByUserName}</Text>
+                                </View>
+                                {/* Post Image */}
                                 <View style={{height:'92%',flex:3}}>
                                     <Image 
                                         source={{uri: item.image}}
@@ -276,6 +294,7 @@ const ItemView = (props) => {
                                     />
                                 </View>
                                 <View style={{paddingTop:10,paddingBottom:20}}>
+                                    {/* Post Buttons */}
                                     <View style={{flexDirection: "row", marginLeft:15, justifyContent:'space-between',marginRight:15}}>
                                         <View style={{flexDirection: "row"}}>
                                             { item.likedBy.includes(userInfo._id) ?
@@ -299,7 +318,7 @@ const ItemView = (props) => {
                                         </View>
                                         <Text>{item.aesthetic}</Text>
                                     </View>
-
+                                    {/* Post Bottom Text */}
                                     <View style={{marginLeft:15, paddingTop:3, marginRight:15}}>
                                         <Text>{item.likedBy.length} {item.likedBy.length == 1 ? 'like' : 'likes'}</Text>
                                         <Text><Text style={{fontWeight: "bold"}}>{item.postedByUserName ? item.postedByUserName+' ' : 'username ' }</Text>{item.caption}</Text>
@@ -311,6 +330,7 @@ const ItemView = (props) => {
                         )
                     })
                 : 
+                    // No posts view
                     <View style={{justifyContent: 'center',alignItems:'center', height:400}}>
                         <Image source={noImage} style={{ width: '60%', height: '60%' }} />
                         <Text style={{marginTop:5, fontSize:25}}>Follow your friends</Text>
