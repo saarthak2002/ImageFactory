@@ -180,9 +180,10 @@ const SearchProfileView = (props) => {
                                 <TouchableOpacity style={{backgroundColor:'#458eff', paddingLeft:50, paddingRight:50, paddingTop:10, paddingBottom:10, borderRadius:10}} onPress={ () => { handleFollow(); } }>
                                     <Text style={{color: 'white'}}>Follow</Text>        
                                 </TouchableOpacity>
-                    }
+                    }    
                 </View>
             </View>
+            <Text style={{textAlign:'center', fontWeight:'bold', marginTop:5, color:'#9c9ea1'}}>{userDetailsSearch.bio}</Text>
             { posts.length > 0 ? 
                 <FlatGrid
                     itemDimension={130}

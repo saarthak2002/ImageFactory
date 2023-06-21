@@ -225,7 +225,7 @@ const ItemView = (props) => {
                             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                             keyboardDismissMode='on-drag'
                         >
-                            {
+                            {   
                                 commentList.length > 0 
                                 ?
                                     commentList.map((comment) => {

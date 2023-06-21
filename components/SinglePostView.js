@@ -163,11 +163,14 @@ const SinglePostView = (props) => {
                                     commentList.map((comment) => {
                                         return (
                                             <View style={{marginLeft:10, marginRight:10, paddingBottom:10}}>
-                                                <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
-                                                    <Text style={{fontWeight:'bold', fontSize:15}}>{comment.username}</Text>
-                                                    <Text style={{fontSize: 12, color:'#777'}}>{formatTime(new Date(comment.createdAt))}</Text>
+                                                <View>
+                                                    <Image source={{ uri: comment.profilePicture ? comment.profilePicture : 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg'  }} style={{ width: 50, height: 50, borderRadius: 50/2 }} />
+                                                    <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
+                                                        <Text style={{fontWeight:'bold', fontSize:15}}>{comment.username}</Text>
+                                                        <Text style={{fontSize: 12, color:'#777'}}>{formatTime(new Date(comment.createdAt))}</Text>
+                                                    </View>
+                                                    <Text style={{fontSize: 15}}>{comment.commentText}</Text>
                                                 </View>
-                                                <Text style={{fontSize: 15}}>{comment.commentText}</Text>
                                             </View>
                                         )
                                     })
