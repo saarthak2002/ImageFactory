@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View, Image, Button, SafeAreaView, TextInput, Alert, ActivityIndicator, Modal, ScrollView } from 'react-native';
+import {StyleSheet, Text, View, Image, Button, SafeAreaView, TextInput, Alert, ActivityIndicator, Modal, ScrollView, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {REACT_APP_BASE_API_URL, REACT_APP_OPEN_AI_KEY, REACT_APP_CLOUDINARY_CLOUD_NAME, REACT_APP_CLOUDINARY_UPLOAD_PRESET} from "@env";
@@ -25,7 +25,9 @@ const GenerateImage = (props) => {
     const [postModalVisible, setPostModalVisible] = useState(false);
     const [caption, setCaption] = useState('');
     const [postStatus, setPostStatus] = useState('');
-
+    const [suggestedCaption, setSuggestedCaption] = useState('');
+    const [suggestedCaptionLoading, setSuggestedCaptionLoading] = useState(false);
+    const [suggestedCaptionError, setSuggestedCaptionError] = useState(false);
     const [post, setPost] = useState({
         image: '',
         caption: '',
@@ -58,6 +60,13 @@ const GenerateImage = (props) => {
         {label: 'Afrofuturism', value: ' in the Afrofuturism aesthetic focusing on black, African, futuristic, sci-fi'},
         {label: 'Cyberpunk', value: ' in the Cyberpunk aesthetic focusing on 1990s, spiky, dyed hair, graphic elements'},
         {label: 'Biopunk, organic', value: ' in the Biopunk, organic aesthetic focusing on slimes, plants, organic, green, nature, weird, leaves, vines, and futuristic biotech'},
+        {label: 'Oil painting', value: ' in an oil painting style'},
+        {label: 'Watercolour', value: ' in a watercolour style'},
+        {label: 'Pencil sketch', value: ' in a pencil sketch style'},
+        {label: '3D render', value: ' in a 3D render style'},
+        {label: 'Photorealistic', value: ' in a photorealistic style'},
+        {label: 'Digital art', value: ' , digital art'},
+        {label: 'Anime', value: ' in an anime art style'},
     ]);
 
     const generateImage = async () => {
@@ -133,6 +142,28 @@ const GenerateImage = (props) => {
                     setPostLoading(false);
                 })        
     };
+
+    const suggestCaption = async () => {
+        try {
+            setSuggestedCaptionError(false);
+            setSuggestedCaptionLoading(true);
+            console.log("Suggest a caption for a post with an image of " + prompt + value + ".");
+            const response = await openai.createChatCompletion({
+                model: "gpt-3.5-turbo",
+                messages: [
+                      {"role": "system", "content": "You are a helpful assistant."},
+                      {"role": "user", "content": "Suggest a caption for a post with an image of " + prompt + value + "."},
+                ]
+            });
+            setSuggestedCaption(response.data.choices[0].message.content);
+            console.log(response.data.choices[0].message.content);
+            setSuggestedCaptionLoading(false);
+        } catch (error) {
+            console.log(error);
+            setSuggestedCaptionLoading(false);
+            setSuggestedCaptionError(true);
+        }
+    }
     
     return (
         <SafeAreaView
@@ -153,7 +184,7 @@ const GenerateImage = (props) => {
                 { postStatus && <Text style={{padding:10, fontSize:10, textAlign: 'center', backgroundColor:'green', color:'white'}}>{postStatus}</Text> }
                 <View style={{flexDirection: "row", marginLeft:20, marginRight:20, justifyContent:'space-between'}}>
                     <Button title="Save" color='steelblue'></Button>
-                    <Button title='Post' color='steelblue' onPress={() => setPostModalVisible(true)}></Button>
+                    <Button title='Post' color='steelblue' onPress={() => { setPostModalVisible(true); suggestCaption(); } }></Button>
                 </View>
                 { image ?  <Image source={{uri: image}}
                                   style={{width: '90%', height: '90%', aspectRatio:1, alignSelf: 'center'}}  
@@ -228,6 +259,22 @@ const GenerateImage = (props) => {
                             /> : <Image source={defaultImage} style={{width: '70%', height: '70%', aspectRatio:1,alignSelf: 'center'}} /> }
                     <Text style={{marginTop:20, marginLeft:20}}>Caption</Text>
                     <TextInput onChangeText={setCaption} value={caption} multiline={true} selectTextOnFocus={!postLoading} editable={!postLoading} style={{borderWidth:1,borderRadius:5, marginRight:20,marginLeft:20, borderColor:'#777',padding:8, marginTop:10}}></TextInput>
+                    <Text style={{marginTop:20, marginLeft:20, marginBottom:5}}>Suggested Caption</Text>
+                    
+                    {
+                        suggestedCaptionLoading
+                        ? 
+                            <ActivityIndicator size="large" style={{marginTop:15}} />
+                        :
+                            suggestedCaptionError
+                            ?
+                                <Text style={{marginTop:20, marginLeft:20, color:'red'}}>There was an error generating a caption</Text>
+                            :
+                                <TouchableOpacity onPress={ () => setCaption(suggestedCaption) } style={{borderWidth:2, borderColor:'#adb5bd', marginLeft:20, marginRight:20, borderRadius: 7 }}>
+                                    <Text style={{marginTop:10, marginLeft:7, marginRight: 7, marginBottom:10}}>{suggestedCaption}</Text>
+                                </TouchableOpacity>
+                    }
+                    
                     { postLoading && <ActivityIndicator size="large" style={{marginTop:15}} /> }
                 </ScrollView>
             </Modal>
