@@ -23,6 +23,23 @@ The REST API offers custom endpoints for secure login and signup. A complete Aut
 ![Login Demo](/docs/gifs/login-demo.gif)
 ![Sign Up Demo](/docs/gifs/signup-demo.gif)
 
+# Feed View
+
 ## Performance
 
-Instead of storing images directly in the database, ImageFactory makes use of a Content Delivery Network (CDN) to optimize performance. Images are served via the ImageFactory REST API through links stored in the database from the Cloudinary API.
+Instead of storing images directly in the database, ImageFactory makes use of a Content Delivery Network (CDN) to optimize performance. Images are served via the Image Factory REST API through links stored in the database from the Cloudinary API.
+
+# Search View
+
+The search view allows a user to find other people to follow. The user can type in a string and hit search, and all usernames similar to it are displayed along with the profile pictures. The user can then choose to view a profile, where there is a follow or unfollow button depending on if the user follows the person they are viewing or not (or a logout button if viewing their own profile). The user can also view their posts and like and comment on them from the search profile view.
+
+![Search View Demo](/docs/gifs/search-view-demo.gif)
+![Search Image](/docs/screenshots/search-image.png)
+
+# Profile View
+
+# Navigation
+
+The bottom tabs navigator uses React Native Navigation to provide animated transitions between the four main views, as well as the many nested screens within those views, while keeping track of where the route came from to go back easily.
+
+![Navigation Tabs](/docs/screenshots/nav.png)
