@@ -16,6 +16,13 @@ The heart of the app is the Picture Factory. Here, the user can enter a prompt t
 ![Generate Image View Demo](/docs/gifs/generate-image-demo-1.gif)
 ![Generated Image from demo](/docs/screenshots/generate-image-demo-1.png)
 
+# Authentication
+
+The REST API offers custom endpoints for secure login and signup. A complete Authentication flow has been implemented with appropriate encryption and form validation.
+
+![Login Demo](/docs/gifs/login-demo.gif)
+![Sign Up Demo](/docs/gifs/signup-demo.gif)
+
 ## Performance
 
 Instead of storing images directly in the database, ImageFactory makes use of a Content Delivery Network (CDN) to optimize performance. Images are served via the ImageFactory REST API through links stored in the database from the Cloudinary API.
