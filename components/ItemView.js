@@ -38,7 +38,6 @@ const ItemView = (props) => {
     }]);
 
     const getListings = async () => {
-        // setPostsLoading(true);
         setLoadMore(true);
         await axios
             .post(REACT_APP_BASE_API_URL + 'posts/feed/' + userInfo._id, {limit: postLimit + 10})

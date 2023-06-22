@@ -82,7 +82,6 @@ const GenerateImage = (props) => {
                 size: "1024x1024",
                 response_format: "b64_json",
             });
-            
             console.log(response.data.data[0].b64_json.substring(0,50));
             const b64Response = response.data.data[0].b64_json;
             const img_src = `data:image/png;base64,${b64Response}`;
@@ -130,12 +129,14 @@ const GenerateImage = (props) => {
                         })
                         .catch((error) => {
                             console.log('error saving post');
-                            setPostStatus('There was an error saving the post');})
+                            setPostStatus('There was an error saving the post');
+                        })
                         .finally(() => { 
                             setPostLoading(false);
                             setCaption('');
-                            setPostModalVisible(false);})
+                            setPostModalVisible(false);
                         })
+                })
                 .catch((error) => {
                     console.log('There was an error uploading the file');
                     console.log(error);
@@ -180,20 +181,33 @@ const GenerateImage = (props) => {
                 style={{flex: 1, backgroundColor: 'white'}}
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             >
-                
+                {/* Post status banner */}
                 { postStatus && <Text style={{padding:10, fontSize:10, textAlign: 'center', backgroundColor:'green', color:'white'}}>{postStatus}</Text> }
+
+                {/* Save and Post Buttons */}
                 <View style={{flexDirection: "row", marginLeft:20, marginRight:20, justifyContent:'space-between'}}>
                     <Button title="Save" color='steelblue'></Button>
                     <Button title='Post' color='steelblue' onPress={() => { setPostModalVisible(true); suggestCaption(); } }></Button>
                 </View>
-                { image ?  <Image source={{uri: image}}
-                                  style={{width: '90%', height: '90%', aspectRatio:1, alignSelf: 'center'}}  
-                                  key={image} 
-                            /> : <Image source={defaultImage} style={{width: '90%', height: '90%', aspectRatio:1, alignSelf: 'center'}} />
-                }
-                { loading && <ActivityIndicator size="large" style={{marginTop:15}} /> }
 
+                {/* Generated Image Display */}
+                { 
+                    image
+                    ?  
+                        <Image 
+                            source={{uri: image}}
+                            style={{width: '90%', height: '90%', aspectRatio:1, alignSelf: 'center'}}  
+                            key={image} 
+                        />
+                    : 
+                        <Image source={defaultImage} style={{width: '90%', height: '90%', aspectRatio:1, alignSelf: 'center'}} />
+                }
+
+                {/* Image loading indicator and prompt text */}
+                { loading && <ActivityIndicator size="large" style={{marginTop:15}} /> }
                 { prompt && <Text style={{padding:10, fontSize:10, textAlign: 'center',marginLeft:20, marginRight:20}}>{prompt}</Text> }
+                
+                {/* Generate Image Button */}
                 <Button
                     title="Generate Image"
                     color='steelblue'
@@ -202,6 +216,7 @@ const GenerateImage = (props) => {
                 />
             </ScrollView>
 
+            {/* Generate Image Modal */}
             <Modal 
                 visible={modalVisible}
                 animationType='slide'
@@ -211,6 +226,7 @@ const GenerateImage = (props) => {
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                     keyboardDismissMode='on-drag'
                 >
+                    {/* Prompt Input */}
                     <Text style={{fontSize:25,textAlign: 'center'}}>Picture Factory</Text>
                     <TextInput 
                         style={[styles.input]}
@@ -219,6 +235,8 @@ const GenerateImage = (props) => {
                         placeholder='a cowboy gunslinger walking in Tokyo...' 
                         multiline={true}
                     />
+
+                    {/* Style Picker */}
                     <View>
                         <DropDownPicker
                             open={open}
@@ -231,6 +249,8 @@ const GenerateImage = (props) => {
                             listMode="MODAL"
                         />
                     </View>
+
+                    {/* Bottom Buttons */}
                     <Button
                         title="Generate Image"
                         color="#f194ff"
@@ -239,6 +259,7 @@ const GenerateImage = (props) => {
                     <Button color="#f194ff" title="Close" onPress={() => {setModalVisible(false)}} />
                 </ScrollView>
             </Modal>
+            {/* Generate Image Modal */}
 
             <Modal 
                 visible={postModalVisible}
@@ -253,14 +274,19 @@ const GenerateImage = (props) => {
                         <Button title="Cancel" color='steelblue' onPress={() => setPostModalVisible(false)}></Button>
                         <Button title='Post' color='steelblue' onPress={uploadImageToCDN}></Button>
                     </View>
-                    { image ?  <Image source={{uri: image}}
+                    {
+                        image
+                        ?
+                            <Image source={{uri: image}}
                                   style={{width: '70%', height: '70%', aspectRatio:1, alignSelf: 'center'}}  
                                   key={image} 
-                            /> : <Image source={defaultImage} style={{width: '70%', height: '70%', aspectRatio:1,alignSelf: 'center'}} /> }
+                            />
+                        :
+                            <Image source={defaultImage} style={{width: '70%', height: '70%', aspectRatio:1,alignSelf: 'center'}} />
+                    }
                     <Text style={{marginTop:20, marginLeft:20}}>Caption</Text>
                     <TextInput onChangeText={setCaption} value={caption} multiline={true} selectTextOnFocus={!postLoading} editable={!postLoading} style={{borderWidth:1,borderRadius:5, marginRight:20,marginLeft:20, borderColor:'#777',padding:8, marginTop:10}}></TextInput>
                     <Text style={{marginTop:20, marginLeft:20, marginBottom:5}}>Suggested Caption</Text>
-                    
                     {
                         suggestedCaptionLoading
                         ? 

@@ -42,6 +42,8 @@ Instead of storing images directly in the database, Image Factory makes use of a
 
 The REST API implements pagination to optimize the loading of the feed. Instead of loading all the posts when the feed view is first displayed, the app loads more posts as the user scrolls and reaches the bottom of the feed. This ensures that the feed view is responsive and snappy. If the user drags down from the top of the feed view, it triggers a refresh call to get new posts. If the user scrolls up past the bottom of the feed view, the system loads more posts from the database via the paginated REST API endpoint.
 
+The second video above shows a demo of the feed pagination.
+
 # Search View
 
 The search view allows a user to find other people to follow. The user can type in a string and hit search, and all usernames similar to it are displayed along with the profile pictures. The user can then choose to view a profile, where there is a follow or unfollow button depending on if the user follows the person they are viewing or not (or a logout button if viewing their own profile). The user can also view their posts and like and comment on them from the search profile view.

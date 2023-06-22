@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import {ScrollView, SafeAreaView, StyleSheet, Text, Button, View, TouchableOpacity, Image, RefreshControl, TouchableHighlight, Alert} from "react-native";
+import {ScrollView, SafeAreaView, StyleSheet, Text, Button, View, TouchableOpacity, Image, RefreshControl, TouchableHighlight, Alert, Modal, TextInput } from "react-native";
 import {AuthContext} from "../context/AuthContext";
 import Spinner from "react-native-loading-spinner-overlay";
 import {FlatGrid} from 'react-native-super-grid';
@@ -7,6 +7,7 @@ import axios from 'axios';
 import {REACT_APP_BASE_API_URL, REACT_APP_CLOUDINARY_CLOUD_NAME, REACT_APP_CLOUDINARY_UPLOAD_PRESET} from "@env";
 import defaultImage from '../assets/default-post.png';
 import * as ImagePicker from 'expo-image-picker';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 const defaultImageUri = Image.resolveAssetSource(defaultImage).uri;
 
 const Profile = (props) => {
@@ -48,6 +49,7 @@ const Profile = (props) => {
                     setFollowersCount(response.data.followers.length);
                     setFollowingCount(response.data.following.length);
                     setUserDetails(response.data);
+                    setNewBio(response.data.bio);
                 })
                 .catch((error) => { console.log('unable to get user details: '+error); });
     }
@@ -110,6 +112,33 @@ const Profile = (props) => {
         }
     };
 
+    const [showEditBioModal, setShowEditBioModal] = useState(false);
+    const [newBio, setNewBio] = useState('');
+    const [editBioLoading, setEditBioLoading] = useState(false);
+    const handleEditBio = () => {
+        console.log(newBio);
+        setEditBioLoading(true);
+        axios
+            .post(REACT_APP_BASE_API_URL + 'userdetails/bio/' + userDetails._id, {bio: newBio})
+            .then((response) => {
+                console.log(response.data);
+                if(!response.data.error) {
+                    onRefresh();
+                }
+                else {
+                    Alert.alert('Error', 'There was an error updating your bio. Please try again later.');
+                }
+            })
+            .catch((error) => {
+                console.log('Error updating bio: ' + error);
+                Alert.alert('Network Error', 'There was an error updating your bio. Please try again later.');
+            })
+            .finally(() => {
+                setShowEditBioModal(false);
+                setEditBioLoading(false);
+            });
+    };
+
     useEffect(() => {
         getListings();
         getUserDetails();
@@ -126,9 +155,40 @@ const Profile = (props) => {
                 },
             ]}
         >
-                <Spinner visible={isLoading} />
-                <Spinner visible={profilePictureLoading} />
-                <View style={{flexDirection:'row',justifyContent:'space-between', marginLeft:15, marginRight:15, paddingTop:15}}>
+            {/* Edit Bio Modal */}
+            <Modal 
+                visible={showEditBioModal}
+                animationType='slide'
+                transparent={true}
+            >
+                <KeyboardAwareScrollView
+                    style={{
+                        height: '50%',
+                        marginTop: 'auto',
+                        
+                    }}
+                >
+                    <View
+                        style={{height: '100%', marginTop: 'auto', backgroundColor:'white', borderBottomLeftRadius: 20, borderBottomRightRadius: 20}}
+                    >
+                        <SafeAreaView style={{marginTop: 100}}>
+                            <View style={{flexDirection: "row", marginLeft:20, marginRight:20, justifyContent: 'space-between'}}>
+                                <Button title="Cancel" color='steelblue' onPress={() => {setShowEditBioModal(false)}}></Button>
+                                <Button title="Save" color='steelblue' onPress={() => {handleEditBio()}}></Button>
+                            </View>
+                            <View style={{justifyContent: 'center', alignItems: 'center', marginBottom: '9%'}}>
+                                <TextInput placeholder='Bio' value={newBio} onChangeText={setNewBio} multiline={true} style={{borderWidth:1,borderRadius:5, borderColor:'#777',padding:8, marginTop:10, width:'80%'}}></TextInput>
+                            </View>
+                        </SafeAreaView>
+                    </View>
+                </KeyboardAwareScrollView>
+            </Modal>
+            {/* Edit Bio Modal */}
+
+            <Spinner visible={editBioLoading} />
+            <Spinner visible={isLoading} />
+            <Spinner visible={profilePictureLoading} />
+            <View style={{flexDirection:'row',justifyContent:'space-between', marginLeft:15, marginRight:15, paddingTop:15}}>
                 <View style={{justifyContent: 'center', alignItems:'center'}}>
                     <TouchableHighlight
                         style={[styles.profileImgContainer, { borderColor: 'green', borderWidth:1 }]}
@@ -153,7 +213,7 @@ const Profile = (props) => {
                         </View>
                     </View>
                     <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-evenly'}}>
-                        <TouchableOpacity style={{backgroundColor:'#458eff', paddingLeft:10, paddingRight:10, paddingTop:10, paddingBottom:10, borderRadius:10, }} onPress={ () => {  } }>
+                        <TouchableOpacity style={{backgroundColor:'#458eff', paddingLeft:10, paddingRight:10, paddingTop:10, paddingBottom:10, borderRadius:10, }} onPress={ () => { setShowEditBioModal(true) } }>
                             <Text style={{color: 'white'}}>Edit Bio</Text>        
                         </TouchableOpacity>
                         <TouchableOpacity style={{backgroundColor:'#458eff', paddingLeft:10, paddingRight:10, paddingTop:10, paddingBottom:10, borderRadius:10, marginLeft:10 }} onPress={ () => { pickImage(); } }>
@@ -166,7 +226,6 @@ const Profile = (props) => {
                 </View>
             </View>
             <Text style={{textAlign:'center', fontWeight:'bold', marginTop:5, color:'#9c9ea1'}}>{userDetails.bio}</Text>
-            
            
             { 
                 listings.length > 0 
