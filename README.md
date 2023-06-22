@@ -25,9 +25,22 @@ The REST API offers custom endpoints for secure login and signup. A complete Aut
 
 # Feed View
 
+The feed serves as the home page of the application. It uses the feed endpoint of the REST API to get a custom feed for each user based on the people they follow. The feed is the primary spot for interactions with posts like commenting and liking.
+
+![Feed View Scroll](/docs/gifs/feed-view-demo-2.gif)
+![Feed Pagation Demo](/docs/gifs/feed-page.gif)
+
 ## Performance
 
-Instead of storing images directly in the database, ImageFactory makes use of a Content Delivery Network (CDN) to optimize performance. Images are served via the Image Factory REST API through links stored in the database from the Cloudinary API.
+Image Factory uses the following optimizations to improve performance:
+
+### CDN
+
+Instead of storing images directly in the database, Image Factory makes use of a Content Delivery Network (CDN) to optimize performance. Images are served via the Image Factory REST API through links stored in the database from the Cloudinary API.
+
+### Pagination
+
+The REST API implements pagination to optimize the loading of the feed. Instead of loading all the posts when the feed view is first displayed, the app loads more posts as the user scrolls and reaches the bottom of the feed. This ensures that the feed view is responsive and snappy. If the user drags down from the top of the feed view, it triggers a refresh call to get new posts. If the user scrolls up past the bottom of the feed view, the system loads more posts from the database via the paginated REST API endpoint.
 
 # Search View
 

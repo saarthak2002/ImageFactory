@@ -20,7 +20,7 @@ const ItemView = (props) => {
 
     const [refreshing, setRefreshing] = useState(false);
     const [loadMore, setLoadMore] = useState(false);
-    const [postLimit, setPostLimit] = useState(10);
+    const [postLimit, setPostLimit] = useState(0);
     const [postsLoading, setPostsLoading] = useState(false);
     const noImage = require('../assets/earth-outline.png');
     const [likeLoading, setLikeLoading] = useState(false);
@@ -39,17 +39,20 @@ const ItemView = (props) => {
 
     const getListings = async () => {
         // setPostsLoading(true);
+        setLoadMore(true);
         await axios
-            .get(REACT_APP_BASE_API_URL + 'posts/feed/' + userInfo._id)
+            .post(REACT_APP_BASE_API_URL + 'posts/feed/' + userInfo._id, {limit: postLimit + 10})
             .then((response) => { 
                 console.log('getting posts');
                 setListings(response.data); 
                 setPostsLoading(false);
+                setLoadMore(false);
             })
             .catch((error) => { 
                 console.log(error); 
                 setPostsLoading(false);
                 Alert.alert('Error fetching feed. Please try again later.');
+                setLoadMore(false);
             });
     }
 
@@ -197,18 +200,16 @@ const ItemView = (props) => {
             });
     }
 
-    console.log(listings)
     return (
         <ScrollView
             style={{marginTop: 35}}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             onMomentumScrollEnd={ ({nativeEvent}) => {
                 if(isCloseToBottom(nativeEvent)) {
-                    setLoadMore(true);
-                    setPostLimit(postLimit+10);
+                    getListings();
+                    setPostLimit(postLimit+10); 
                     console.log('PL:'+postLimit);
                     console.log('load more');
-                    setLoadMore(false);
                 }
             }}
         >
