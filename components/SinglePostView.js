@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useContext } from "react";
-import { ScrollView, Text, View, TouchableOpacity, Image, StyleSheet, Modal, KeyboardAvoidingView, SafeAreaView, Button, TextInput } from "react-native";
+import { ScrollView, Text, View, TouchableOpacity, Image, StyleSheet, Modal, KeyboardAvoidingView, SafeAreaView, Button, TextInput, Alert } from "react-native";
 import axios from 'axios';
 import { REACT_APP_BASE_API_URL } from "@env";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { AuthContext } from '../context/AuthContext';
 import Spinner from "react-native-loading-spinner-overlay";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import defaultImage from '../assets/default-post.png';
 const defaultImageUri = Image.resolveAssetSource(defaultImage).uri;
 
@@ -31,7 +32,10 @@ const SinglePostView = (props) => {
     const getPost = async () => {
         await axios
             .get(REACT_APP_BASE_API_URL + 'posts/' + postId)
-            .then((response) => { setPost(response.data); })
+            .then((response) => { 
+                setPost(response.data);
+                setNewCaption(response.data.caption);
+            })
             .catch((error) => { console.log('error fetching post: '+error); });
     }
 
@@ -130,6 +134,37 @@ const SinglePostView = (props) => {
             });
     }
 
+    const [showEditModal,  setShowEditModal] = useState(false);
+    const [newCaption, setNewCaption] = useState('');
+    const [editLoading, setEditLoading] = useState(false);
+
+    const handleEditPost = async () => {
+        console.log('editing post: '+post._id);
+        console.log('new caption: '+newCaption);
+        setEditLoading(true);
+        await axios
+            .post(REACT_APP_BASE_API_URL + 'posts/edit/' + postId, {newCaption: newCaption})
+            .then((response) => {
+                if(response.data.success) {
+                    getPost();
+                    setEditLoading(false);
+                    setShowEditModal(false);
+                }
+                else {
+                    console.log('unable to edit post');
+                    Alert.alert('Unable to edit post');
+                    setEditLoading(false);
+                    setShowEditModal(false);
+                }
+            })
+            .catch((error) => {
+                console.log('error editing post: '+error);
+                Alert.alert('Unable to edit post');
+                setEditLoading(false);
+                setShowEditModal(false);
+            });
+    }
+
     useEffect(() => {
         getPost();
     }, []);
@@ -195,7 +230,41 @@ const SinglePostView = (props) => {
             </Modal>
             {/* Comment Modal */}
 
+            {/* Edit Post Modal */}
+            <Modal 
+                visible={showEditModal}
+                animationType='slide'
+                transparent={true}
+            >
+                <KeyboardAwareScrollView
+                    style={{
+                        height: '50%',
+                        marginTop: 'auto',
+                        
+                    }}
+                >
+                    <View
+                        style={{height: '100%', marginTop: 'auto', backgroundColor:'white', borderBottomLeftRadius: 20, borderBottomRightRadius: 20}}
+                    >
+                        <SafeAreaView style={{marginTop: 100}}>
+                            <View style={{flexDirection: "row", marginLeft:20, marginRight:20, justifyContent: 'space-between'}}>
+                                <Button title="Cancel" color='steelblue' onPress={() => {setShowEditModal(false)}}></Button>
+                                <Button title="Save" color='steelblue' onPress={() => { handleEditPost() }}></Button>
+                            </View>
+                            <View style={{justifyContent: 'center', alignItems: 'center', marginBottom: '3%'}}>
+                                <Text style={{alignSelf:'flex-start', marginLeft:'10%', marginTop: '5%'}}>Edit Caption</Text>
+                                <TextInput placeholder='Caption' value={newCaption} onChangeText={setNewCaption} multiline={true} style={{borderWidth:1,borderRadius:5, borderColor:'#777',padding:8, marginTop:10, width:'80%'}}></TextInput>
+                            </View>
+                            <Button title="Delete Post" color='red' style={{marginBottom: '3%'}} onPress={() => {  }}></Button>
+                            
+                        </SafeAreaView>
+                    </View>
+                </KeyboardAwareScrollView>
+            </Modal>
+            {/* Edit Post Modal */}
+
             <Spinner visible={likeLoading}/>
+            <Spinner visible={editLoading}/>
             <View style={{flex: 1}}>
                 <View style={{height:'92%',flex:3}}>
                     <Image source={{uri: post.image ? post.image : defaultImageUri}} style={{width:'100%', height:'100%', aspectRatio:1, alignSelf:'center'}} />
@@ -224,8 +293,20 @@ const SinglePostView = (props) => {
                                     <Ionicons name={'ios-chatbubbles'} size={30} color={'black'}/>
                                 </View>
                             </TouchableOpacity>
+
+                            {
+                                post.postedByUser == userInfo._id &&
+                                <TouchableOpacity onPress={()=>{ setShowEditModal(true); }} style={{paddingLeft:10}}>
+                                    <View>
+                                        <Ionicons name={'ios-pencil'} size={30} color={'black'}/>
+                                    </View>
+                                </TouchableOpacity>
+                            }
+
                         </View>
-                        <Text>{post.aesthetic}</Text>
+                        <View>
+                            <Text>{post.aesthetic}</Text>
+                        </View>
                     </View>
                     <View style={{marginLeft:15,paddingTop:3, marginRight:15}}>
                         <Text>{post.likedBy.length} {post.likedBy.length == 1 ? 'like' : 'likes'}</Text>
