@@ -142,7 +142,7 @@ const Profile = (props) => {
     useEffect(() => {
         getListings();
         getUserDetails();
-        console.log(listings);
+        console.log('here: ' + listings);
     }, []);
     
     return (

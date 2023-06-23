@@ -12,6 +12,7 @@ const defaultImageUri = Image.resolveAssetSource(defaultImage).uri;
 const SinglePostView = (props) => {
 
     const {userInfo} = useContext(AuthContext);
+    const navigation = props.navigation;
     const {postId} = props.route.params;
     const [post, setPost] = useState({
         likedBy: []
@@ -165,6 +166,25 @@ const SinglePostView = (props) => {
             });
     }
 
+    const [deleteLoading, setDeleteLoading] = useState(false);
+    const handleDeletePost = async () => {
+        setDeleteLoading(true);
+        await axios
+            .delete(REACT_APP_BASE_API_URL + 'posts/' + postId)
+            .then((response) => {
+                console.log(response.data);
+                setDeleteLoading(false);
+                setShowEditModal(false);
+                navigation.navigate('Profile');
+            })
+            .catch((error) => {
+                console.log('error deleting post: '+error);
+                setDeleteLoading(false);
+                setShowEditModal(false);
+                Alert.alert('Unable to delete post');
+            });
+    }
+
     useEffect(() => {
         getPost();
     }, []);
@@ -236,6 +256,7 @@ const SinglePostView = (props) => {
                 animationType='slide'
                 transparent={true}
             >
+                <Spinner visible={deleteLoading}/>
                 <KeyboardAwareScrollView
                     style={{
                         height: '50%',
@@ -255,7 +276,7 @@ const SinglePostView = (props) => {
                                 <Text style={{alignSelf:'flex-start', marginLeft:'10%', marginTop: '5%'}}>Edit Caption</Text>
                                 <TextInput placeholder='Caption' value={newCaption} onChangeText={setNewCaption} multiline={true} style={{borderWidth:1,borderRadius:5, borderColor:'#777',padding:8, marginTop:10, width:'80%'}}></TextInput>
                             </View>
-                            <Button title="Delete Post" color='red' style={{marginBottom: '3%'}} onPress={() => {  }}></Button>
+                            <Button title="Delete Post" color='red' style={{marginBottom: '3%'}} onPress={() => { handleDeletePost()  }}></Button>
                             
                         </SafeAreaView>
                     </View>
