@@ -53,6 +53,11 @@ The search view allows a user to find other people to follow. The user can type 
 
 # Profile View
 
+The profile view allows a logged in user to view and edit all of their posts. From the profile view, the user can also set or edit their display picture and profile bio. Clicking on a post brings up a view which has the comment and like options, as well as an additional edit button, if you are the poster.
+
+![Profile](/docs/gifs/profile-demo-new.gif)
+![Edit Profile](/docs/gifs/edit-profile-demo.gif)
+
 # Navigation
 
 The bottom tabs navigator uses React Native Navigation to provide animated transitions between the four main views, as well as the many nested screens within those views, while keeping track of where the route came from to go back easily.

@@ -14,6 +14,7 @@ const Search = (props) => {
     const [searchResults, setSearchResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const noImage = require('../assets/search-circle-outline.png');
+    const [hasSeacrhedOnce, setHasSearchedOnce] = useState(false);
 
     const SearchResult = ({ _id, username, profilePiture }) => (
         <View style={{padding: 10, flex: 1, flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginLeft:20, marginRight:20}} >
@@ -32,6 +33,7 @@ const Search = (props) => {
     const handleSearchInput = () => {
         console.log(searchString);
         setLoading(true);
+        setHasSearchedOnce(true);
         axios
             .get(REACT_APP_BASE_API_URL + 'users/search/' + searchString)
             .then((response) => { 
@@ -59,23 +61,31 @@ const Search = (props) => {
             <SearchBar
                 placeholder="Search"
                 onChangeText={ setSearchString }
-                onSearchButtonPress={ handleSearchInput }
+                onSearchButtonPress={ () => { handleSearchInput(); } }
                 onCancelButtonPress={ () => {} }
+                barStyle="default"
             />
             {loading && <ActivityIndicator size='large' style={{marginTop:20}}/>}
             {
-                searchResults.length > 0 
+                hasSeacrhedOnce
                 ?
-                    <FlatList
-                        data={searchResults}
-                        renderItem={renderItem}
-                        keyExtractor={(item) => item._id}
-                    />
+                    searchResults.length > 0 
+                    ?
+                        <FlatList
+                            data={searchResults}
+                            renderItem={renderItem}
+                            keyExtractor={(item) => item._id}
+                        />
+                    :
+                        <View style={{justifyContent: 'center',alignItems:'center'}}>
+                            <Image source={noImage} style={{ width: '60%', height: '60%' }} />
+                    <       Text style={{marginTop:5, fontSize:25}}>{'No Results :('}</Text>
+                        </View>
                 :
-                    <View style={{justifyContent: 'center',alignItems:'center'}}>
-                        <Image source={noImage} style={{ width: '60%', height: '60%' }} />
-                        <Text style={{marginTop:5, fontSize:25}}>Find your tribe</Text>
-                    </View>
+                <View style={{justifyContent: 'center',alignItems:'center'}}>
+                    <Image source={noImage} style={{ width: '60%', height: '60%' }} />
+                    <Text style={{marginTop:5, fontSize:25}}>Find your tribe</Text>
+                </View>
             }
         </SafeAreaView>
     )
