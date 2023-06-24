@@ -1,6 +1,6 @@
 # Image Factory
 
-A React Native mobile app for the Image Factory social media platform that focuses on creating and sharing AI generated art.
+A React Native mobile app for the Image Factory social media platform that focuses on creating and sharing AI generated art. Watch a full demonstration of the app here.
 
 ![Feed Demo](/docs/gifs/feed-demo.gif)
 ![Profile Demo](/docs/gifs/profile-demo.gif)
