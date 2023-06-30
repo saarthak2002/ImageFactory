@@ -1,13 +1,15 @@
 # Image Factory
 
-A React Native mobile app for the Image Factory social media platform that focuses on creating and sharing AI generated art. Watch a full demonstration of the app here.
+A React Native mobile app for the Image Factory social media platform that focuses on creating and sharing AI generated art. Watch a full demonstration of the app [here](https://youtu.be/trwPyBvvdhU).
 
 ![Feed Demo](/docs/gifs/feed-demo.gif)
 ![Profile Demo](/docs/gifs/profile-demo.gif)
 
+Each post displays the prompt used to create it, along with the aesthetic applied. This ties into Image Factory's primary goal- to inspire the user's creations based on what others have made and develop their prompt engineering skills.
+
 ## Backend
 
-Image factory's backend is powered by a custom REST API constructed using Node.js and Express with MongoDB as the database. The repository for the backend can be viewed [here](https://github.com/saarthak2002/ImageFactoryBackEnd).
+Image factory's backend is powered by a custom REST API constructed using Node.js and Express with MongoDB as the database. The repository for the backend can be viewed [here](https://github.com/saarthak2002/ImageFactoryBackEnd). The backend REST API was hosted on Heroku.
 
 # Generate Image View
 
