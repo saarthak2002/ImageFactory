@@ -2,8 +2,11 @@
 
 A React Native mobile app for the Image Factory social media platform that focuses on creating and sharing AI generated art. Watch a full demonstration of the app [here](https://youtu.be/trwPyBvvdhU). Link to [backend repository](https://github.com/saarthak2002/ImageFactoryBackEnd).
 
-![Feed Demo](/docs/gifs/feed-demo.gif)
-![Profile Demo](/docs/gifs/profile-demo.gif)
+<!-- ![Feed Demo](/docs/gifs/feed-demo.gif)
+![Profile Demo](/docs/gifs/profile-demo.gif) -->
+
+<kbd> <img src="./docs/gifs/feed-demo.gif" /> </kbd>
+<kbd> <img src="./docs/gifs/profile-demo.gif" /> </kbd>
 
 Each post displays the prompt used to create it, along with the aesthetic applied. This ties into Image Factory's primary goal- to inspire the user's creations based on what others have made and develop their prompt engineering skills.
 
